@@ -1,23 +1,32 @@
 class Solution {
 public:
-    int atMostKOdds(vector<int>& nums, int k) {
-        int l = 0, count = 0, odds = 0;
-
-        for (int r = 0; r < nums.size(); r++) {
-            odds += nums[r] % 2;
-
-            while (odds > k) {
-                odds -= nums[l] % 2;
-                l++;
+    int numberOfSubarrays(vector<int>& nums, int k) {
+          unordered_map<int,int>mp;
+        int n=nums.size();
+        int count=0;
+        int sum=0;
+        for(int i=0;i<n;i++){
+            if(nums[i]%2==0){
+                nums[i]=0;
+            }else{
+                nums[i]=1;
             }
+            sum +=nums[i];
+            if(sum==k)count++;
+            if(mp.find(sum-k)!=mp.end()){
+                count=mp[sum-k]+count;
 
-            count += (r - l + 1);
+            }
+            if(mp.find(sum)!=mp.end()){
+                mp[sum]++;
+
+            }else{
+                mp[sum]=1;
+            }
+            
         }
-
         return count;
     }
-
-    int numberOfSubarrays(vector<int>& nums, int k) {
-        return atMostKOdds(nums, k) - atMostKOdds(nums, k - 1);
-    }
+        
+    
 };
