@@ -1,38 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 class Solution {
 public:
     string minWindow(string s, string t) {
-        int n = s.length();
-        map<char,int>mp;
-        for(char &ch:t){
-            mp[ch]++;
+        if (t == "") return "";
 
-        }
-        int requiredCount=t.length();
-        int i=0,j=0;
-        int minStart=0;
-        int minWindow=INT_MAX;
-        while(j<n){
-            char ch_j =s[j];
-            if(mp[ch_j]>0) requiredCount--;
-            mp[ch_j]--;
-            while(requiredCount==0){
-                if(minWindow >j-i+1){
-                    minWindow = j-i+1;
-                    minStart=i;
+        unordered_map<char, int> countT, window;
+        for (char c : t) countT[c]++;
 
-                }
-                char ch_i=s[i];
-                mp[ch_i]++;
-                if(mp[ch_i]>0)
-                    requiredCount++;
-                    i++;
-                }
-                j++;
-               
+        int have = 0, need = countT.size();
+        int resLen = INT_MAX;
+        int resL = -1, resR = -1;
+
+        int l = 0;
+        for (int r = 0; r < s.size(); r++) {
+            char c = s[r];
+            window[c]++;
+
+            if (countT.find(c) != countT.end() && window[c] == countT[c]) {
+                have++;
             }
-             return minWindow ==INT_MAX ?"":s.substr(minStart,minWindow);
 
+            while (have == need) {
+                // update result
+                if ((r - l + 1) < resLen) {
+                    resL = l;
+                    resR = r;
+                    resLen = r - l + 1;
+                }
+
+                // pop from the left
+                window[s[l]]--;
+                if (countT.find(s[l]) != countT.end() && window[s[l]] < countT[s[l]]) {
+                    have--;
+                }
+                l++;
+            }
         }
-        
-    
+
+        return resLen == INT_MAX ? "" : s.substr(resL, resLen);
+    }
 };
